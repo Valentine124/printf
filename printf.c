@@ -14,70 +14,31 @@ void handle_specifier(char ch, va_list args);
  */
 int _printf(const char *format, ...)
 {
-	int i, len = 0, c = 0;
-	char f;
-	va_list ptr;
+	int printed_chars;
+	conver_t f_list[] = {
+		{"c", print_char},
+		{"s", print_string},
+		{"%", print_percent},
+		{"d", print_integer},
+		{"i", print_integer},
+		{"b", print_binary},
+		{"r", print_reversed},
+		{"R", rot13},
+		{"u", unsigned_integer},
+		{"o", print_octal},
+		{"x", print_hex},
+		{"X", print_heX},
+		{NULL, NULL}
+	};
+
+	va_list arg_list;
 
 	if (format == NULL)
 		return (-1);
 
-	while (format[c++])
-		len++;
-
-	va_start(ptr, format);
-
-	for (i = 0; i < len; i++)
-	{
-		if (format[i - 1] == '%' && format[i - 2] != '%')
-			continue;
-		if (format[i] == '%')
-		{
-			f = format[i + 1];
-
-			handle_specifier(f, ptr);
-		}
-		else
-		{
-			write(1, &(format[i]), 1);
-		}
-	}
-	va_end(ptr);
-	return (len);
-}
-
-/**
- * handle_specifier - handle all specifiers
- *
- * @ch: specifier character
- *
- * @args: the variable argument list
- *
- * Description: this functio handles the specifiers charater entered
- *
- * Return: Nothing
- */
-void handle_specifier(char ch, va_list args)
-{
-	char nc, *ns;
-	int per = 37;
-
-	switch (ch)
-	{
-		case 'c':
-			nc = va_arg(args, int);
-
-			write(1, &nc, 1);
-			break;
-		case 's':
-			ns = va_arg(args, char *);
-
-			if (ns == NULL)
-				ns = "(null)";
-
-			write(1, ns, strlen(ns));
-			break;
-		case '%':
-			write(1, &per, 1);
-			break;
-	}
+	va_start(arg_list, format);
+	/*Calling parser function*/
+	printed_chars = parser(format, f_list, arg_list);
+	va_end(arg_list);
+	return (printed_chars);
 }
