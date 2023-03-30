@@ -72,7 +72,7 @@ void handle_specifier(char ch, va_list args)
 			ns = va_arg(args, char *);
 
 			if (ns == NULL)
-				return;
+				ns = "(null)";
 
 			write(1, ns, strlen(ns));
 			break;
